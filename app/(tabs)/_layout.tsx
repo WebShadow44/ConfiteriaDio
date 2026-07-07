@@ -1,34 +1,27 @@
-import { Tabs } from 'expo-router';
+import { Tabs, Redirect } from 'expo-router';
 import React from 'react';
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useAuthStore } from '@/store/authStore';
 
+/* Configuracion del sistema de tabs. La barra inferior se oculta completamente
+   ya que la navegacion se gestiona desde los botones del dashboard. */
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const { isLoggedIn } = useAuthStore();
+
+  if (!isLoggedIn) {
+    return <Redirect href="/" />;
+  }
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
+        tabBarStyle: { display: 'none' },
+      }}
+    >
       <Tabs.Screen
         name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
+        options={{ title: 'Dashboard' }}
       />
     </Tabs>
   );
